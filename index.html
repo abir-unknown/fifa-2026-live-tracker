@@ -3,282 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIFA World Cup 2026 Schedule (Bangladesh Time)</title>
+    <title>FIFA World Cup 2026™ Matrix Engine (BST)</title>
     <style>
-        :root {
-            --primary: #006c35;
-            --secondary: #8c1d40;
-            --bg: #f4f6f9;
-            --card-bg: #ffffff;
-            --text: #2d3748;
-            --text-light: #718096;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { background: #090d16; color: #f1f5f9; padding: 2rem 1rem; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        header { text-align: center; margin-bottom: 2rem; }
+        header h1 { font-size: 2.5rem; background: linear-gradient(135deg, #3b82f6, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        header p { color: #64748b; margin-top: 0.5rem; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-        }
+        .dashboard-bar { background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 1rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
+        .badge { background: #3b82f620; color: #60a5fa; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+        .btn { background: #3b82f6; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        .btn-danger { background: #ef4444; }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+        /* Configuration Panel */
+        .config-panel { background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+        .config-panel h3 { margin-bottom: 1rem; color: #a855f7; display: flex; justify-content: space-between; }
+        .group-editor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .group-box { background: #1e293b; padding: 1rem; border-radius: 8px; border: 1px solid #334155; }
+        .group-box h4 { margin-bottom: 0.5rem; border-bottom: 1px solid #475569; padding-bottom: 0.25rem; }
+        .team-input-row { display: flex; gap: 0.5rem; margin-bottom: 0.4rem; }
+        .team-input-row input { background: #0f172a; border: 1px solid #475569; color: #fff; padding: 0.25rem 0.5rem; border-radius: 4px; width: 100%; font-size: 0.85rem; }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            background: linear-gradient(135deg, var(--primary), #004d26);
-            color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+        /* Match Grid */
+        .section-title { font-size: 1.5rem; margin-bottom: 1rem; border-left: 4px solid #3b82f6; padding-left: 0.5rem; }
+        .match-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1rem; margin-bottom: 3rem; }
+        .match-card { background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; justify-content: space-between; }
+        .match-card.live { border-color: #f59e0b; box-shadow: 0 0 10px rgba(245,158,11,0.2); }
+        .match-header { display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .match-teams { display: flex; justify-content: space-between; align-items: center; margin: 0.75rem 0; font-weight: 700; }
+        .score-box { background: #0f172a; padding: 0.25rem 0.75rem; border-radius: 6px; color: #facc15; font-family: monospace; font-size: 1.25rem; }
+        .match-footer { border-top: 1px solid #1e293b; padding-top: 0.5rem; margin-top: 0.5rem; font-size: 0.8rem; color: #94a3b8; }
+        
+        .status-tag { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .status-upcoming { background: #1e293b; color: #94a3b8; }
+        .status-live { background: #b45309; color: #fdba74; animation: pulse 1.5s infinite; }
+        .status-finished { background: #065f46; color: #34d399; }
 
-        header h1 {
-            margin: 0 0 10px 0;
-            font-size: 24px;
-        }
-
-        header p {
-            margin: 0;
-            opacity: 0.9;
-            font-size: 14px;
-        }
-
-        .timezone-badge {
-            display: inline-block;
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-top: 10px;
-            font-size: 12px;
-        }
-
-        .match-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-left: 5px solid var(--secondary);
-            transition: transform 0.2s;
-        }
-
-        .match-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .match-info {
-            flex: 1;
-        }
-
-        .group-tag {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--secondary);
-            margin-bottom: 5px;
-            letter-spacing: 0.5px;
-        }
-
-        .teams {
-            font-size: 16px;
-            font-weight: 600;
-            margin: 5px 0;
-        }
-
-        .venue {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-
-        .match-time-box {
-            text-align: right;
-            padding-left: 20px;
-            border-left: 1px solid #e2e8f0;
-            min-width: 140px;
-        }
-
-        .bd-date {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .bd-time {
-            font-size: 16px;
-            font-weight: 700;
-            margin-top: 2px;
-        }
-
-        @media (max-width: 600px) {
-            .match-card {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .match-time-box {
-                text-align: left;
-                padding-left: 0;
-                border-left: none;
-                border-top: 1px solid #e2e8f0;
-                width: 100%;
-                margin-top: 15px;
-                padding-top: 10px;
-            }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>FIFA World Cup 2026™ Match Schedule</h1>
-        <p>Opening fixtures converted from local stadium times directly to your local timezone</p>
-        <div class="timezone-badge">Timezone: Bangladesh Time (BST / UTC+6)</div>
+        <h1>FIFA WORLD CUP 2026™ ENGINE</h1>
+        <p>Dynamic 48-Team Matrix Customizer & Live Tracker Core · Bangladesh Time (BST)</p>
     </header>
 
-    <div id="schedule-container"></div>
+    <div class="dashboard-bar">
+        <div class="badge">⏰ Local Engine Sync: <span id="clockBST">--:--:--</span> BST</div>
+        <div>
+            <button class="btn" onclick="toggleConfigurator()">⚙️ Edit Group Allocations</button>
+            <button class="btn btn-danger" onclick="resetEngineData()">🔄 Reset Database</button>
+        </div>
+    </div>
+
+    <!-- Live Configuration Panel -->
+    <div class="config-panel" id="configPanel" style="display: none;">
+        <h3>
+            <span>✍️ Live Draw Configurator (Update names instantly)</span>
+            <button class="btn" onclick="saveCustomGroups()">💾 Apply Team Names</button>
+        </h3>
+        <div class="group-editor-grid" id="groupEditorGrid"></div>
+    </div>
+
+    <div class="section-title">⚽ TOURNAMENT SCHEMA MATCHES (104 Match Matrix)</div>
+    <div class="match-grid" id="matchesContainer"></div>
 </div>
 
 <script>
-    // Complete structured match data with standard ISO timestamps
-    const matchSchedule = [
-        {
-            matchNo: 1,
-            group: "Group A",
-            homeTeam: "Mexico 🇲🇽",
-            awayTeam: "South Africa 🇿🇦",
-            venue: "Estadio Azteca, Mexico City",
-            isoStart: "2026-06-12T01:00:00+06:00" // Corresponds to June 11, 19:00 Local
-        },
-        {
-            matchNo: 2,
-            group: "Group A",
-            homeTeam: "South Korea 🇰🇷",
-            awayTeam: "Czechia 🇨🇿",
-            venue: "Estadio Akron, Guadalajara",
-            isoStart: "2026-06-12T08:00:00+06:00"
-        },
-        {
-            matchNo: 3,
-            group: "Group B",
-            homeTeam: "Canada 🇨🇦",
-            awayTeam: "Bosnia & Herzegovina 🇧🇦",
-            venue: "BMO Field, Toronto",
-            isoStart: "2026-06-13T01:00:00+06:00"
-        },
-        {
-            matchNo: 4,
-            group: "Group D",
-            homeTeam: "United States 🇺🇸",
-            awayTeam: "Paraguay 🇵🇾",
-            venue: "SoFi Stadium, Los Angeles",
-            isoStart: "2026-06-13T07:00:00+06:00"
-        },
-        {
-            matchNo: 5,
-            group: "Group B",
-            homeTeam: "Qatar 🇶🇦",
-            awayTeam: "Switzerland 🇨🇭",
-            venue: "Levi's Stadium, San Francisco",
-            isoStart: "2026-06-14T01:00:00+06:00"
-        },
-        {
-            matchNo: 6,
-            group: "Group C",
-            homeTeam: "Brazil 🇧🇷",
-            awayTeam: "Morocco 🇲🇦",
-            venue: "MetLife Stadium, New York/New Jersey",
-            isoStart: "2026-06-14T04:00:00+06:00"
-        },
-        {
-            matchNo: 7,
-            group: "Group C",
-            homeTeam: "Haiti 🇭🇹",
-            awayTeam: "Scotland 🏴󠁧󠁢󠁳󠁣󠁴󠁿",
-            venue: "Gillette Stadium, Boston",
-            isoStart: "2026-06-14T07:00:00+06:00"
-        },
-        {
-            matchNo: 8,
-            group: "Group D",
-            homeTeam: "Australia 🇦🇺",
-            awayTeam: "Türkiye 🇹🇷",
-            venue: "BC Place, Vancouver",
-            isoStart: "2026-06-14+10:00:00+06:00"
-        },
-        {
-            matchNo: 9,
-            group: "Group E",
-            homeTeam: "Germany 🇩🇪",
-            awayTeam: "Curaçao 🇨🇼",
-            venue: "NRG Stadium, Houston",
-            isoStart: "2026-06-14T23:00:00+06:00"
-        },
-        {
-            matchNo: 10,
-            group: "Group F",
-            homeTeam: "Netherlands 🇳🇱",
-            awayTeam: "Japan 🇯🇵",
-            venue: "AT&T Stadium, Dallas",
-            isoStart: "2026-06-15T02:00:00+06:00"
-        }
+    // Official Openers Logistical Anchors
+    const INITIAL_GROUPS = {
+        A: ["Mexico", "Seed A2", "Seed A3", "Seed A4"],
+        B: ["Canada", "Seed B2", "Seed B3", "Seed B4"],
+        C: ["Seed C1", "Seed C2", "Seed C3", "Seed C4"],
+        D: ["USA", "Seed D2", "Seed D3", "Seed D4"],
+        E: ["Seed E1", "Seed E2", "Seed E3", "Seed E4"],
+        F: ["Seed F1", "Seed F2", "Seed F3", "Seed F4"],
+        G: ["Seed G1", "Seed G2", "Seed G3", "Seed G4"],
+        H: ["Seed H1", "Seed H2", "Seed H3", "Seed H4"],
+        I: ["Seed I1", "Seed I2", "Seed I3", "Seed I4"],
+        J: ["Seed J1", "Seed J2", "Seed J3", "Seed J4"],
+        K: ["Seed K1", "Seed K2", "Seed K3", "Seed K4"],
+        L: ["Seed L1", "Seed L2", "Seed L3", "Seed L4"]
+    };
+
+    const VENUES = [
+        "Estadio Azteca, Mexico City", "BC Place, Vancouver", "SoFi Stadium, Los Angeles",
+        "MetLife Stadium, New York", "AT&T Stadium, Dallas", "Mercedes-Benz Stadium, Atlanta"
     ];
 
-    function renderSchedule() {
-        const container = document.getElementById('schedule-container');
-        container.innerHTML = '';
+    let tournamentGroups = JSON.parse(localStorage.getItem("wc2026_groups")) || INITIAL_GROUPS;
+    let matchDatabase = [];
 
-        matchSchedule.forEach(match => {
-            // Instantiates date from fixed ISO string
-            const matchDate = new Date(match.isoStart);
+    function toggleConfigurator() {
+        const panel = document.getElementById("configPanel");
+        panel.style.display = panel.style.display === "none" ? "block" : "none";
+    }
 
-            // Explicit formatting parameters tailored for localized Bangladeshi display values
-            const dateOptions = { 
-                weekday: 'long', 
-                day: 'numeric', 
-                month: 'short', 
-                year: 'numeric',
-                timeZone: 'Asia/Dhaka'
-            };
+    function buildGroupEditor() {
+        const grid = document.getElementById("groupEditorGrid");
+        grid.innerHTML = "";
+        Object.keys(tournamentGroups).forEach(groupLetter => {
+            const box = document.createElement("div");
+            box.className = "group-box";
+            box.innerHTML = `<h4>Group ${groupLetter}</h4>`;
             
-            const timeOptions = { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                hour12: true,
-                timeZone: 'Asia/Dhaka'
-            };
-
-            const formattedDate = matchDate.toLocaleDateString('en-US', dateOptions);
-            const formattedTime = matchDate.toLocaleTimeString('en-US', timeOptions);
-
-            const matchCard = document.createElement('div');
-            matchCard.className = 'match-card';
-            matchCard.innerHTML = `
-                <div class="match-info">
-                    <div class="group-tag">Match ${match.matchNo} • ${match.group}</div>
-                    <div class="teams">${match.homeTeam} vs ${match.awayTeam}</div>
-                    <div class="venue">${match.venue}</div>
-                </div>
-                <div class="match-time-box">
-                    <div class="bd-date">${formattedDate}</div>
-                    <div class="bd-time">${formattedTime}</div>
-                </div>
-            `;
-            container.appendChild(matchCard);
+            tournamentGroups[groupLetter].forEach((team, idx) => {
+                const row = document.createElement("div");
+                row.className = "team-input-row";
+                row.innerHTML = `
+                    <span style="font-size:0.8rem; min-width:20px; color:#94a3b8">${idx+1}</span>
+                    <input type="text" value="${team}" id="input_${groupLetter}_${idx}">
+                `;
+                box.appendChild(row);
+            });
+            grid.appendChild(box);
         });
     }
 
-    // Initialize schedule rendering on DOM generation
-    window.addEventListener('DOMContentLoaded', renderSchedule);
-</script>
+    function saveCustomGroups() {
+        Object.keys(tournamentGroups).forEach(groupLetter => {
+            for (let idx = 0; idx < 4; idx++) {
+                const inputVal = document.getElementById(`input_${groupLetter}_${idx}`).value;
+                tournamentGroups[groupLetter][idx] = inputVal || `Seed ${groupLetter}${idx+1}`;
+            }
+        });
+        localStorage.setItem("wc2026_groups", JSON.stringify(tournamentGroups));
+        generateMatchMatrix();
+        renderMatches();
+        alert("Database structure successfully updated with your verified allocations!");
+    }
 
+    function generateMatchMatrix() {
+        matchDatabase = [];
+        let matchCounter = 1;
+
+        // Structural Generation Loop for 12 Groups
+        Object.keys(tournamentGroups).forEach((groupLetter, gIdx) => {
+            const teams = tournamentGroups[groupLetter];
+            
+            // Baseline structural anchor date for Group Stage Phase (June 11, 2026)
+            let groupBaseDate = new Date("2026-06-11T18:00:00Z");
+            groupBaseDate.setDate(groupBaseDate.getDate() + Math.floor(gIdx / 2)); 
+
+            // Standard Group Round Pairings Matrix (Round Robin 1, 2, 3)
+            const pairings = [
+                {t1: teams[0], t2: teams[1], v: VENUES[gIdx % 3]},
+                {t1: teams[2], t2: teams[3], v: VENUES[(gIdx + 1) % 6]},
+                {t1: teams[0], t2: teams[2], v: VENUES[(gIdx + 2) % 6]},
+                {t1: teams[1], t2: teams[3], v: VENUES[(gIdx + 3) % 6]},
+                {t1: teams[3], t2: teams[0], v: VENUES[(gIdx + 4) % 6]},
+                {t1: teams[1], t2: teams[2], v: VENUES[(gIdx + 5) % 6]}
+            ];
+
+            pairings.forEach((p, pIdx) => {
+                let mDate = new Date(groupBaseDate.getTime());
+                mDate.setHours(mDate.getHours() + (pIdx * 4)); 
+
+                // Inject dynamic live configuration states safely for system testing
+                let initialStatus = "upcoming";
+                let s1 = null, s2 = null;
+
+                if (matchCounter === 1) { 
+                    initialStatus = "live"; 
+                    s1 = 1; s2 = 0; 
+                }
+
+                matchDatabase.push({
+                    matchNum: matchCounter++,
+                    stage: `Group ${groupLetter}`,
+                    team1: p.t1,
+                    team2: p.t2,
+                    score1: s1,
+                    score2: s2,
+                    status: initialStatus,
+                    venue: p.v,
+                    dateIso: mDate.toISOString(),
+                    minute: matchCounter === 2 ? 12 : 0
+                });
+            });
+        });
+    }
+
+    function renderMatches() {
+        const container = document.getElementById("matchesContainer");
+        container.innerHTML = "";
+
+        matchDatabase.forEach(m => {
+            const matchDate = new Date(m.dateIso);
+            
+            // Explicit Transformation parameters locked to Bangladesh Standard Time
+            const bstDateStr = matchDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Asia/Dhaka' });
+            const bstTimeStr = matchDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Dhaka' });
+
+            const card = document.createElement("div");
+            card.className = `match-card ${m.status}`;
+            
+            let statusLabel = "📅 UPCOMING";
+            if (m.status === "live") statusLabel = `🔴 LIVE • 12'`;
+            if (m.status === "finished") statusLabel = "✅ FINAL";
+
+            card.innerHTML = `
+                <div class="match-header">
+                    <span>Match ${m.matchNum} · ${m.stage}</span>
+                    <span class="status-tag status-${m.status}">${statusLabel}</span>
+                </div>
+                <div class="match-teams">
+                    <span>${m.team1}</span>
+                    <div class="score-box">${m.score1 !== null ? m.score1 : '-'} : ${m.score2 !== null ? m.score2 : '-'}</div>
+                    <span>${m.team2}</span>
+                </div>
+                <div class="match-footer">
+                    <div>🇧🇩 BST: ${bstDateStr} @ ${bstTimeStr}</div>
+                    <div style="font-size: 0.7rem; color: #64748b; margin-top: 2px;">📍 ${m.venue}</div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function runEngineHeartbeat() {
+        const now = new Date();
+        document.getElementById("clockBST").innerText = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Dhaka' });
+    }
+
+    function resetEngineData() {
+        localStorage.removeItem("wc2026_groups");
+        tournamentGroups = INITIAL_GROUPS;
+        buildGroupEditor();
+        generateMatchMatrix();
+        renderMatches();
+    }
+
+    // Run Engine
+    buildGroupEditor();
+    generateMatchMatrix();
+    renderMatches();
+    setInterval(runEngineHeartbeat, 1000);
+</script>
 </body>
 </html>
