@@ -256,6 +256,12 @@
         <button class="filter-btn" onclick="filterMatches('Group D')">Group D</button>
         <button class="filter-btn" onclick="filterMatches('Group E')">Group E</button>
         <button class="filter-btn" onclick="filterMatches('Group F')">Group F</button>
+        <button class="filter-btn" onclick="filterMatches('Group G')">Group G</button>
+        <button class="filter-btn" onclick="filterMatches('Group H')">Group H</button>
+        <button class="filter-btn" onclick="filterMatches('Group I')">Group I</button>
+        <button class="filter-btn" onclick="filterMatches('Group J')">Group J</button>
+        <button class="filter-btn" onclick="filterMatches('Group K')">Group K</button>
+        <button class="filter-btn" onclick="filterMatches('Group L')">Group L</button>
     </div>
 
     <div class="match-grid" id="matchMatrixContainer"></div>
@@ -289,7 +295,21 @@
         { id: 7, stage: "Group C", home: "Haiti (HAI)", away: "Scotland (SCO)", venue: "Boston Stadium, Eastern Region", etIso: "2026-06-13T21:00:00-04:00" },
         { id: 8, stage: "Group D", home: "Australia (AUS)", away: "Türkiye (TUR)", venue: "BC Place, Vancouver Region", etIso: "2026-06-14T00:00:00-04:00" },
         { id: 9, stage: "Group E", home: "Germany (GER)", away: "Curaçao (CUW)", venue: "Houston Stadium, Central Region", etIso: "2026-06-14T13:00:00-04:00" },
-        { id: 10, stage: "Group F", home: "Netherlands (NED)", away: "Japan (JPN)", venue: "Dallas Stadium, Central Region", etIso: "2026-06-14T16:00:00-04:00" }
+        { id: 10, stage: "Group F", home: "Netherlands (NED)", away: "Japan (JPN)", venue: "Dallas Stadium, Central Region", etIso: "2026-06-14T16:00:00-04:00" },
+        
+        // Added Fixtures extracted from document schedule for Groups G to L [Source: 1]
+        { id: 11, stage: "Group G", home: "Belgium (BEL)", away: "Egypt (EGY)", venue: "San Francisco Bay Area Stadium", etIso: "2026-06-15T15:00:00-04:00" },
+        { id: 12, stage: "Group G", home: "Spain (ESP)", away: "New Zealand (NZL)", venue: "Los Angeles Stadium, Western Region", etIso: "2026-06-15T21:00:00-04:00" },
+        { id: 13, stage: "Group H", home: "Spain (ESP)", away: "Cabo Verde (CPV)", venue: "Atlanta Stadium, Central Region", etIso: "2026-06-16T15:00:00-04:00" },
+        { id: 14, stage: "Group H", home: "Saudi Arabia (KSA)", away: "Uruguay (URU)", venue: "Miami Stadium, Eastern Region", etIso: "2026-06-16T21:00:00-04:00" },
+        { id: 15, stage: "Group I", home: "France (FRA)", away: "Senegal (SEN)", venue: "New York New Jersey Stadium", etIso: "2026-06-17T15:00:00-04:00" },
+        { id: 16, stage: "Group I", home: "Braga (BRG)", away: "Norway (NOR)", venue: "Boston Stadium, Eastern Region", etIso: "2026-06-17T21:00:00-04:00" },
+        { id: 17, stage: "Group J", home: "Argentina (ARG)", away: "Algeria (ALG)", venue: "Kansas City Stadium, Central Region", etIso: "2026-06-18T15:00:00-04:00" },
+        { id: 18, stage: "Group J", home: "Austria (AUT)", away: "Jordan (JOR)", venue: "Estadio Guadalajara, Central Region", etIso: "2026-06-18T21:00:00-04:00" },
+        { id: 19, stage: "Group K", home: "Portugal (POR)", away: "Congo DR (COD)", venue: "Atlanta Stadium, Central Region", etIso: "2026-06-19T15:00:00-04:00" },
+        { id: 20, stage: "Group K", home: "Uzbekistan (UZB)", away: "Colombia (COL)", venue: "Seattle Stadium, Western Region", etIso: "2026-06-19T21:00:00-04:00" },
+        { id: 21, stage: "Group L", home: "England (ENG)", away: "Croatia (CRO)", venue: "Toronto Stadium, Eastern Region", etIso: "2026-06-20T15:00:00-04:00" },
+        { id: 22, stage: "Group L", home: "Ghana (GHA)", away: "Panama (PAN)", venue: "New York New Jersey Stadium", etIso: "2026-06-20T21:00:00-04:00" }
     ];
 
     function buildGroupContainers() {
