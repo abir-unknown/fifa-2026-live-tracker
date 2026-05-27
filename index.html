@@ -85,6 +85,18 @@
             font-weight: 600;
         }
 
+        .branding-header {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #a855f7;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, transparent, #a855f720, transparent);
+            padding: 0.4rem 0;
+        }
+
         .section-title {
             font-size: 1.6rem;
             font-weight: 700;
@@ -304,6 +316,13 @@
             padding-top: 1.5rem;
             line-height: 1.6;
         }
+        .branding-footer {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #3b82f6;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+            margin-top: 0.5rem;
+        }
 
         @media (max-width: 768px) {
             body { padding: 1rem; }
@@ -314,6 +333,8 @@
 </head>
 <body>
 <div class="container">
+    <div class="branding-header">Engine Core Developed by unXknown</div>
+    
     <div class="hero">
         <h1>🏆 FIFA WORLD CUP 2026™ LIVE</h1>
         <div class="sub">48 Teams Expansion · Bangladesh Time (BST) · Realtime Tracker Engine</div>
@@ -332,9 +353,11 @@
     <div class="roadmap-container" id="roadmapContainer">
         <div id="roadmapInner" class="rounds"></div>
     </div>
+
     <footer>
         ⚽ Expanded 48-Team Matrix | Configured for <strong>Bangladesh Standard Time (GMT+6)</strong><br>
         Stadiums Location Contexts: 🇺🇸 United States | 🇲🇽 Mexico | 🇨🇦 Canada
+        <div class="branding-footer">Created by unXknown</div>
     </footer>
 </div>
 
@@ -546,6 +569,7 @@
                 resolveKnockoutProgression();
             }
             renderMatrixGrids();
+            renderBracketRoadmap();
         }, 1500); // Accelerated lifecycle timing
         
         liveIntervals.set(match.id, interval);
@@ -569,7 +593,7 @@
         const completedGroupMatches = matches.filter(m => m.status === "finished" && !m.isKnockout);
         if (completedGroupMatches.length >= 2) {
             const r32 = matches.find(m => m.id === 'KO_PHASE_1');
-            if (r32 && r32.team1.includes("Winner")) {
+            if (r32) {
                 r32.team1 = completedGroupMatches[0].score1 >= completedGroupMatches[0].score2 ? completedGroupMatches[0].team1 : completedGroupMatches[0].team2;
                 r32.team2 = completedGroupMatches[1].score1 >= completedGroupMatches[1].score2 ? completedGroupMatches[1].team1 : completedGroupMatches[1].team2;
             }
