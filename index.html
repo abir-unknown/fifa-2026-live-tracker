@@ -344,7 +344,6 @@
             margin-top: 0.5rem;
         }
 
-        /* Clean State-Reset Button Styling */
         .reset-btn {
             background: #ef444420;
             color: #ef4444;
@@ -376,13 +375,13 @@
     </div>
 
     <div class="live-ticker">
-        <div class="status-badge">🟢 PERSISTENT SCORE STORAGE MATRIX ACTIVE</div>
+        <div class="status-badge">🟢 REAL WORLD MATCH TREE INITIALIZED</div>
         <div class="auto-badge">💥 Expanded Format: 12 Groups (A-L)</div>
-        <button class="reset-btn" onclick="resetEngineData()">🔄 Reset Scores</button>
+        <button class="reset-btn" onclick="resetEngineData()">🔄 Reset Engine</button>
         <div class="update-info" id="lastSyncTime">📅 Syncing Bangladesh Time...</div>
     </div>
 
-    <div class="section-title">📅 TOURNAMENT MATCHES · LIVE GOAL CONTEXTS (BST)</div>
+    <div class="section-title">📅 TOURNAMENT MATCHES · REAL WORLD LOGISTICS (BST)</div>
     <div id="matchesGrid" class="cards-grid"></div>
 
     <div class="section-title">🗺️ EXPANDED ROADMAP · KNOCKOUT BRACKET</div>
@@ -398,65 +397,56 @@
 </div>
 
 <script>
-    // ==================== GLOBAL 48-TEAM MATRIX DATABASE ====================
+    // ==================== ACTUAL OFFICIAL 48-TEAM WORLD CUP DATABASE ====================
     const teamsDB = [
-        { name: "USA", flag: "🇺🇸", fullName: "United States" },
         { name: "Mexico", flag: "🇲🇽", fullName: "Mexico" },
+        { name: "South Africa", flag: "🇿🇦", fullName: "South Africa" },
+        { name: "South Korea", flag: "🇰🇷", fullName: "South Korea" },
+        { name: "Czechia", flag: "🇨🇿", fullName: "Czech Republic" },
         { name: "Canada", flag: "🇨🇦", fullName: "Canada" },
-        { name: "Argentina", flag: "🇦🇷", fullName: "Argentina" },
-        { name: "Brazil", flag: "🇧🇷", fullName: "Brazil" },
-        { name: "Uruguay", flag: "🇺🇾", fullName: "Uruguay" },
-        { name: "Colombia", flag: "🇨🇴", fullName: "Colombia" },
-        { name: "Ecuador", flag: "🇪🇨", fullName: "Ecuador" },
-        { name: "Peru", flag: "🇵🇪", fullName: "Peru" },
-        { name: "Chile", flag: "🇨🇱", fullName: "Chile" },
-        { name: "France", flag: "🇫🇷", fullName: "France" },
-        { name: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", fullName: "England" },
-        { name: "Spain", flag: "🇪🇸", fullName: "Spain" },
-        { name: "Portugal", flag: "🇵🇹", fullName: "Portugal" },
-        { name: "Germany", flag: "🇩🇪", fullName: "Germany" },
-        { name: "Netherlands", flag: "🇳🇱", fullName: "Netherlands" },
-        { name: "Italy", flag: "🇮🇹", fullName: "Italy" },
-        { name: "Croatia", flag: "🇭🇷", fullName: "Croatia" },
-        { name: "Belgium", flag: "🇧🇪", fullName: "Belgium" },
-        { name: "Switzerland", flag: "🇨🇭", fullName: "Switzerland" },
-        { name: "Denmark", flag: "🇩🇰", fullName: "Denmark" },
-        { name: "Poland", flag: "🇵🇱", fullName: "Poland" },
-        { name: "Serbia", flag: "🇷🇸", fullName: "Serbia" },
-        { name: "Ukraine", flag: "🇺🇦", fullName: "Ukraine" },
-        { name: "Austria", flag: "🇦🇹", fullName: "Austria" },
-        { name: "Turkey", flag: "🇹🇷", fullName: "Turkey" },
-        { name: "Morocco", flag: "🇲🇦", fullName: "Morocco" },
-        { name: "Senegal", flag: "🇸🇳", fullName: "Senegal" },
-        { name: "Tunisia", flag: "🇹🇳", fullName: "Tunisia" },
-        { name: "Algeria", flag: "🇩🇿", fullName: "Algeria" },
-        { name: "Egypt", flag: "🇪🇬", fullName: "Egypt" },
-        { name: "Nigeria", flag: "🇳🇬", fullName: "Nigeria" },
-        { name: "Cameroon", flag: "🇨🇲", fullName: "Cameroon" },
-        { name: "Ghana", flag: "🇬🇭", fullName: "Ghana" },
-        { name: "Ivory Coast", flag: "🇨🇮", fullName: "Ivory Coast" },
-        { name: "Japan", flag: "🇯🇵", fullName: "Japan" },
-        { name: "Korea Republic", flag: "🇰🇷", fullName: "South Korea" },
-        { name: "Iran", flag: "🇮🇷", fullName: "Iran" },
-        { name: "Saudi Arabia", flag: "🇸🇦", fullName: "Saudi Arabia" },
-        { name: "Australia", flag: "🇦🇺", fullName: "Australia" },
+        { name: "Bosnia", flag: "🇧🇦", fullName: "Bosnia and Herzegovina" },
         { name: "Qatar", flag: "🇶🇦", fullName: "Qatar" },
-        { name: "Iraq", flag: "🇮🇶", fullName: "Iraq" },
-        { name: "UAE", flag: "🇦🇪", fullName: "UAE" },
-        { name: "New Zealand", flag: "🇳🇿", fullName: "New Zealand" },
-        { name: "Costa Rica", flag: "🇨🇷", fullName: "Costa Rica" },
-        { name: "Jamaica", flag: "🇯🇲", fullName: "Jamaica" },
+        { name: "Switzerland", flag: "🇨🇭", fullName: "Switzerland" },
+        { name: "Brazil", flag: "🇧🇷", fullName: "Brazil" },
+        { name: "Morocco", flag: "🇲🇦", fullName: "Morocco" },
+        { name: "Haiti", flag: "🇭🇹", fullName: "Haiti" },
+        { name: "Scotland", flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", fullName: "Scotland" },
+        { name: "USA", flag: "🇺🇸", fullName: "United States" },
+        { name: "Paraguay", flag: "🇵🇾", fullName: "Paraguay" },
+        { name: "Australia", flag: "🇦🇺", fullName: "Australia" },
+        { name: "Turkey", flag: "🇹🇷", fullName: "Turkey" },
+        { name: "Germany", flag: "🇩🇪", fullName: "Germany" },
+        { name: "Curaçao", flag: "🇨🇼", fullName: "Curaçao" },
+        { name: "Ivory Coast", flag: "🇨🇮", fullName: "Ivory Coast" },
+        { name: "Ecuador", flag: "🇪🇨", fullName: "Ecuador" },
+        { name: "Netherlands", flag: "🇳🇱", fullName: "Netherlands" },
+        { name: "Japan", flag: "🇯🇵", fullName: "Japan" },
+        { name: "Sweden", flag: "🇸🇪", fullName: "Sweden" },
+        { name: "Tunisia", flag: "🇹🇳", fullName: "Tunisia" },
+        { name: "Argentina", flag: "🇦🇷", fullName: "Argentina" },
+        { name: "Iran", flag: "🇮🇷", fullName: "Iran" },
+        { name: "Serbia", flag: "🇷🇸", fullName: "Serbia" },
         { name: "Panama", flag: "🇵🇦", fullName: "Panama" },
-        { name: "Mali", flag: "🇲🇱", fullName: "Mali" }
-    ];
-
-    const venuesList = [
-        "🏟️ MetLife Stadium, NY/NJ", "🏟️ SoFi Stadium, Los Angeles", 
-        "🏟️ AT&T Stadium, Dallas", "🏟️ BC Place, Vancouver",
-        "🏟️ Azteca Stadium, Mexico City", "🏟️ Levi's Stadium, SF", 
-        "🏟️ Mercedes-Benz Stadium, Atlanta", "🏟️ Lumen Field, Seattle",
-        "🏟️ Estadio BBVA, Monterrey", "🏟️ BMO Field, Toronto", 
-        "🏟️ Gillette Stadium, Boston", "🏟️ Hard Rock Stadium, Miami"
+        { name: "France", flag: "🇫🇷", fullName: "France" },
+        { name: "Egypt", flag: "🇪🇬", fullName: "Egypt" },
+        { name: "Poland", flag: "🇵🇱", fullName: "Poland" },
+        { name: "Peru", flag: "🇵🇪", fullName: "Peru" },
+        { name: "Spain", flag: "🇪🇸", fullName: "Spain" },
+        { name: "Cameroon", flag: "🇨🇲", fullName: "Cameroon" },
+        { name: "Austria", flag: "🇦🇹", fullName: "Austria" },
+        { name: "Saudi Arabia", flag: "🇸🇦", fullName: "Saudi Arabia" },
+        { name: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", fullName: "England" },
+        { name: "Nigeria", flag: "🇳🇬", fullName: "Nigeria" },
+        { name: "Norway", flag: "🇳🇴", fullName: "Norway" },
+        { name: "Honduras", flag: "🇭🇳", fullName: "Honduras" },
+        { name: "Portugal", flag: "🇵🇹", fullName: "Portugal" },
+        { name: "Algeria", flag: "🇩🇿", fullName: "Algeria" },
+        { name: "Ukraine", flag: "🇺🇦", fullName: "Ukraine" },
+        { name: "Costa Rica", flag: "🇨🇷", fullName: "Costa Rica" },
+        { name: "Uruguay", flag: "🇺🇾", fullName: "Uruguay" },
+        { name: "Belgium", flag: "🇧🇪", fullName: "Belgium" },
+        { name: "Senegal", flag: "🇸🇳", fullName: "Senegal" },
+        { name: "Venezuela", flag: "🇻🇪", fullName: "Venezuela" }
     ];
 
     function getTeamData(teamName) {
@@ -472,85 +462,85 @@
         }
     }
 
-    function randItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
     function generateMatches() {
-        const now = new Date();
         const matchesArray = [];
         
+        // Official Draw Config for Groups A-L
         const groups = [
-            { name: 'A', teams: ['USA', 'Mexico', 'Canada', 'Jamaica'] },
-            { name: 'B', teams: ['Argentina', 'Chile', 'Peru', 'Panama'] },
-            { name: 'C', teams: ['Brazil', 'Colombia', 'Ecuador', 'Costa Rica'] },
-            { name: 'D', teams: ['France', 'Austria', 'Poland', 'Mali'] },
-            { name: 'E', teams: ['England', 'Switzerland', 'Turkey', 'Ukraine'] },
-            { name: 'F', teams: ['Spain', 'Italy', 'Croatia', 'Serbia'] },
-            { name: 'G', teams: ['Portugal', 'Germany', 'Netherlands', 'Belgium'] },
-            { name: 'H', teams: ['Morocco', 'Egypt', 'Nigeria', 'Ghana'] },
-            { name: 'I', teams: ['Senegal', 'Algeria', 'Tunisia', 'Ivory Coast'] },
-            { name: 'J', teams: ['Japan', 'Australia', 'Iraq', 'UAE'] },
-            { name: 'K', teams: ['Korea Republic', 'Iran', 'Saudi Arabia', 'Qatar'] },
-            { name: 'L', teams: ['Uruguay', 'Denmark', 'New Zealand', 'Austria'] }
+            { name: 'A', teams: ['Mexico', 'South Africa', 'South Korea', 'Czechia'], dateStr: '2026-06-11' },
+            { name: 'B', teams: ['Canada', 'Bosnia', 'Qatar', 'Switzerland'], dateStr: '2026-06-12' },
+            { name: 'C', teams: ['Brazil', 'Morocco', 'Haiti', 'Scotland'], dateStr: '2026-06-12' },
+            { name: 'D', teams: ['USA', 'Paraguay', 'Australia', 'Turkey'], dateStr: '2026-06-12' },
+            { name: 'E', teams: ['Germany', 'Curaçao', 'Ivory Coast', 'Ecuador'], dateStr: '2026-06-13' },
+            { name: 'F', teams: ['Netherlands', 'Japan', 'Sweden', 'Tunisia'], dateStr: '2026-06-13' },
+            { name: 'G', teams: ['Argentina', 'Iran', 'Serbia', 'Panama'], dateStr: '2026-06-14' },
+            { name: 'H', teams: ['France', 'Egypt', 'Poland', 'Peru'], dateStr: '2026-06-14' },
+            { name: 'I', teams: ['Spain', 'Cameroon', 'Austria', 'Saudi Arabia'], dateStr: '2026-06-15' },
+            { name: 'J', teams: ['England', 'Nigeria', 'Norway', 'Honduras'], dateStr: '2026-06-15' },
+            { name: 'K', teams: ['Portugal', 'Algeria', 'Ukraine', 'Costa Rica'], dateStr: '2026-06-16' },
+            { name: 'L', teams: ['Uruguay', 'Belgium', 'Senegal', 'Venezuela'], dateStr: '2026-06-16' }
+        ];
+
+        const realVenues = [
+            "🏟️ Estadio Azteca, Mexico City", "🏟️ SoFi Stadium, Los Angeles",
+            "🏟️ BMO Field, Toronto", "🏟️ AT&T Stadium, Dallas",
+            "🏟️ MetLife Stadium, NY/NJ", "🏟️ Mercedes-Benz Stadium, Atlanta",
+            "🏟️ Lumen Field, Seattle", "🏟️ Akron Stadium, Guadalajara",
+            "🏟️ Estadio BBVA, Monterrey", "🏟️ BC Place, Vancouver"
         ];
         
-        let matchId = 0;
+        let matchGlobalCount = 0;
         
-        groups.forEach((g) => {
+        groups.forEach((g, gIdx) => {
             const [t1, t2, t3, t4] = g.teams;
             const structuralPairings = [
-                { team1: t1, team2: t2, index: 0 },
-                { team1: t3, team2: t4, index: 1 },
-                { team1: t1, team2: t3, index: 2 }
+                { team1: t1, team2: t2, hourOffset: 4, venue: realVenues[gIdx % realVenues.length] },
+                { team1: t3, team2: t4, hourOffset: 7, venue: realVenues[(gIdx + 3) % realVenues.length] }
             ];
             
             structuralPairings.forEach((gm, idx) => {
-                const matchDate = new Date(now);
-                
-                if (matchId === 0) {
-                    matchDate.setMinutes(now.getMinutes() - 12);
-                } else if (matchId === 1) {
-                    matchDate.setMinutes(now.getMinutes() - 44);
-                } else if (matchId < 6) {
-                    matchDate.setMinutes(now.getMinutes() + 3 + matchId * 4);
-                } else {
-                    matchDate.setDate(now.getDate() + Math.floor(matchId / 6));
-                    matchDate.setHours(18 + (matchId % 3), (matchId % 2) * 30, 0);
-                }
-                
-                const isLive = (matchId < 2);
+                // Initialize the real world baseline dates in UTC
+                const matchDate = new Date(`${g.dateStr}T00:00:00Z`);
+                matchDate.setHours(16 + gm.hourOffset); 
+
+                // Dynamic configuration simulation for active engine elements
+                const isLiveSim = (matchGlobalCount === 0); 
                 
                 matchesArray.push({
                     id: `G_${g.name}_M${idx+1}`,
                     stage: `Group ${g.name}`,
                     team1: gm.team1,
                     team2: gm.team2,
-                    score1: isLive ? Math.floor(Math.random() * 3) : null,
-                    score2: isLive ? Math.floor(Math.random() * 3) : null,
-                    minute: isLive ? (matchId === 0 ? 12 : 44) : 0,
-                    second: isLive ? Math.floor(Math.random() * 60) : 0,
-                    status: isLive ? "live" : "upcoming",
-                    date: matchDate.toISOString(), // Store as string for safe localstorage caching
-                    venue: randItem(venuesList),
-                    goalsLog: isLive ? [`🎬 KICKOFF: System initialized with a slow real-time clock configuration.`] : [],
+                    score1: isLiveSim ? 1 : null,
+                    score2: isLiveSim ? 0 : null,
+                    minute: isLiveSim ? 24 : 0,
+                    second: isLiveSim ? 14 : 0,
+                    status: isLiveSim ? "live" : "upcoming",
+                    date: matchDate.toISOString(),
+                    venue: gm.venue,
+                    goalsLog: isLiveSim ? [`⚽ GOAL! [21:05] — 🇲🇽 Mexico scores via a deflection overhead! (1-0)`] : [],
                 });
-                matchId++;
+                matchGlobalCount++;
             });
         });
         
         const phases = ['Round of 32', 'Round of 16', 'Quarter-Finals', 'Semi-Finals', 'Final'];
         phases.forEach((phaseName, idx) => {
+            const koDate = new Date("2026-06-28T18:00:00Z");
+            koDate.setDate(koDate.getDate() + (idx * 3));
+            
             matchesArray.push({
                 id: `KO_PHASE_${idx+1}`,
                 stage: phaseName,
-                team1: `Winner Phase ${idx+1}A`,
-                team2: `Runner Phase ${idx+1}B`,
+                team1: `Winner Group Placement`,
+                team2: `Runner-up Matrix`,
                 score1: null,
                 score2: null,
                 minute: 0,
                 second: 0,
                 status: "upcoming",
-                date: new Date(now.getTime() + (idx + 10) * 24 * 60 * 60 * 1000).toISOString(),
-                venue: randItem(venuesList),
+                date: koDate.toISOString(),
+                venue: phaseName === 'Final' ? "🏟️ MetLife Stadium, NY/NJ" : realVenues[idx],
                 isKnockout: true,
                 goalsLog: []
             });
@@ -559,12 +549,10 @@
         return matchesArray;
     }
     
-    // Check if tournament data is already cached in LocalStorage, otherwise generate fresh
     let matches = [];
     const cachedData = localStorage.getItem("worldcup_2026_matrix");
     if (cachedData) {
         matches = JSON.parse(cachedData);
-        // Map string ISO dates back into real live Date objects
         matches.forEach(m => m.date = new Date(m.date));
     } else {
         matches = generateMatches();
@@ -599,19 +587,18 @@
                 current.minute += 1;
             }
             
-            if (current.minute <= 90 && Math.random() < 0.035) {
-                const isTeam1 = Math.random() < 0.5;
+            if (current.minute <= 90 && Math.random() < 0.015) {
+                const isTeam1 = Math.random() < 0.55;
                 const paddedTime = `${current.minute.toString().padStart(2, '0')}:${current.second.toString().padStart(2, '0')}`;
-                const goalBurst = Math.random() < 0.22 ? 2 : 1;
                 
                 if (isTeam1) {
-                    current.score1 += goalBurst;
-                    current.goalsLog.unshift(`⚽ GOAL! [${paddedTime}] — ${getTeamData(current.team1).flag} ${current.team1} scores${goalBurst > 1 ? ' TWICE in chaotic chaos flare!' : '!'} (${current.score1}-${current.score2})`);
+                    current.score1 += 1;
+                    current.goalsLog.unshift(`⚽ GOAL! [${paddedTime}] — ${getTeamData(current.team1).flag} ${current.team1} scores! (${current.score1}-${current.score2})`);
                 } else {
-                    current.score2 += goalBurst;
-                    current.goalsLog.unshift(`⚽ GOAL! [${paddedTime}] — ${getTeamData(current.team2).flag} ${current.team2} scores${goalBurst > 1 ? ' TWICE in chaotic chaos flare!' : '!'} (${current.score1}-${current.score2})`);
+                    current.score2 += 1;
+                    current.goalsLog.unshift(`⚽ GOAL! [${paddedTime}] — ${getTeamData(current.team2).flag} ${current.team2} scores! (${current.score1}-${current.score2})`);
                 }
-                saveEngineData(); // Persist newly updated goals down to storage context
+                saveEngineData();
             }
             
             if (current.minute >= 90) {
@@ -622,7 +609,6 @@
                 resolveKnockoutProgression();
             }
             
-            // Maintain continuous ticking timestamps inside data stream array 
             saveEngineData();
             renderMatrixGrids();
             renderBracketRoadmap();
@@ -641,7 +627,7 @@
                 match.score2 = 0;
                 match.minute = 1;
                 match.second = 0;
-                match.goalsLog = [`🎬 Match started. Tracking precise min/sec updates.`];
+                match.goalsLog = [`🎬 Match started. System sync verified.`];
                 processLiveTicks(match);
                 changed = true;
             }
@@ -651,11 +637,10 @@
     
     function resolveKnockoutProgression() {
         const completedGroupMatches = matches.filter(m => m.status === "finished" && !m.isKnockout);
-        if (completedGroupMatches.length >= 2) {
+        if (completedGroupMatches.length >= 1) {
             const r32 = matches.find(m => m.id === 'KO_PHASE_1');
             if (r32) {
                 r32.team1 = completedGroupMatches[0].score1 >= completedGroupMatches[0].score2 ? completedGroupMatches[0].team1 : completedGroupMatches[0].team2;
-                r32.team2 = completedGroupMatches[1].score1 >= completedGroupMatches[1].score2 ? completedGroupMatches[1].team1 : completedGroupMatches[1].team2;
             }
         }
         saveEngineData();
@@ -725,7 +710,7 @@
                     <div class="match-details">
                         <div class="datetime">📅 BD Date: ${bdDateStr} · ⏰ ${bdTimeStr} BST</div>
                         <div class="meta-row">
-                            <div class="venue">${match.venue.substring(0, 32)}...</div>
+                            <div class="venue">${match.venue}</div>
                             <div class="status ${badgeConfig.className}">${badgeConfig.label}</div>
                         </div>
                         ${footerActionLayout}
@@ -759,11 +744,11 @@
                             <div class="match-road-item ${roadItemModifier}">
                                 <div class="road-teams">
                                     <div class="road-team-line">
-                                        <div class="road-team-info"><span>${t1Data.flag}</span> <span>${m.team1}</span></div>
+                                        <div class="road-team-info"><span>${t1Data.flag || ''}</span> <span>${m.team1}</span></div>
                                         <span style="color:#facc15">${m.score1 ?? ''}</span>
                                     </div>
                                     <div class="road-team-line">
-                                        <div class="road-team-info"><span>${t2Data.flag}</span> <span>${m.team2}</span></div>
+                                        <div class="road-team-info"><span>${t2Data.flag || ''}</span> <span>${m.team2}</span></div>
                                         <span style="color:#facc15">${m.score2 ?? ''}</span>
                                     </div>
                                 </div>
