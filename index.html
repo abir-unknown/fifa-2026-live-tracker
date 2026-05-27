@@ -75,6 +75,15 @@
             font-size: 0.85rem;
         }
 
+        .creator-badge {
+            background: rgba(168, 85, 247, 0.15);
+            color: var(--accent-purple);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
         /* Filter Controls */
         .filter-section {
             display: flex;
@@ -225,15 +234,16 @@
 <div class="container">
     <header>
         <h1>FIFA WORLD CUP 2026™ DATABASE MATRIX</h1>
-        <p> Created by unXknown </p>
+        <p>Live Match Tracker & Tournament Matrix</p>
     </header>
 
     <div class="meta-bar">
         <div class="zone-badge">⏰ System Sync: Bangladesh Standard Time (BST / UTC+6)</div>
-        <div id="liveClock" style="font-family: monospace; font-weight: bold;">--:--:-- PM</div>
+        <div class="creator-badge">🛠️ Created by unXknown</div>
+        <div id="liveClock" style="font-family: monospace; font-weight: bold;">--:--:-- PM BST</div>
     </div>
 
-    <div class="schedule-title">📋 Official Group Allocations (PDF Section 10)</div>
+    <div class="schedule-title">📋 Official Group Allocations</div>
     <div class="groups-container" id="groupsContainer"></div>
 
     <div class="schedule-title">📅 Live Match Matrix Timeline (Converted to BST)</div>
@@ -301,10 +311,8 @@
         const targetMatches = filterStage === "ALL" ? FIXTURE_MATRIX : FIXTURE_MATRIX.filter(m => m.stage === filterStage);
 
         targetMatches.forEach(match => {
-            // Processing parsed ISO time parameters down to browser local translation engines
             const dateObj = new Date(match.etIso);
 
-            // Forcing explicit transform layout options locked strictly onto Dhaka runtime zone
             const bstDateStr = dateObj.toLocaleDateString("en-US", {
                 weekday: "short", month: "short", day: "numeric", year: "numeric", timeZone: "Asia/Dhaka"
             });
@@ -325,7 +333,7 @@
                 </div>
                 <div class="time-engine-box">
                     <div class="bst-date">🇧🇩 ${bstDateStr}</div>
-                    <div class="bst-time">${bstTimeStr} BST</div>
+                    <div class="bst-time">${bstTimeStr}</div>
                     <div class="venue-info">📍 ${match.venue}</div>
                 </div>
             `;
@@ -334,7 +342,6 @@
     }
 
     function filterMatches(stage) {
-        // Adjust style class flags across active menu buttons
         document.querySelectorAll(".filter-btn").forEach(btn => {
             if(btn.innerText.includes(stage) || (stage === 'ALL' && btn.innerText === 'All Matches')) {
                 btn.classList.add("active");
@@ -345,13 +352,11 @@
         renderMatchEngine(stage);
     }
 
-    // Secondary live interface ticking engine hook
     function runLiveClock() {
         const timeStr = new Date().toLocaleTimeString("en-US", { timeZone: "Asia/Dhaka" });
         document.getElementById("liveClock").innerText = timeStr + " BST";
     }
 
-    // Document Initiation Cycles
     window.addEventListener("DOMContentLoaded", () => {
         buildGroupContainers();
         renderMatchEngine();
