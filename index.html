@@ -290,6 +290,13 @@
             text-align: left;
             box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
+        .match-road-item.road-live {
+            border-left-color: #f59e0b;
+            background: #18191f;
+        }
+        .match-road-item.road-finished {
+            border-left-color: #10b981;
+        }
         .road-teams {
             display: flex;
             flex-direction: column;
@@ -305,6 +312,19 @@
             display: flex;
             align-items: center;
             gap: 6px;
+        }
+        .road-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 6px;
+            padding-top: 4px;
+            border-top: 1px solid #1f2937;
+        }
+        .road-status-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         footer {
@@ -364,11 +384,9 @@
 <script>
     // ==================== GLOBAL 48-TEAM MATRIX DATABASE ====================
     const teamsDB = [
-        // North America Host Nations
         { name: "USA", flag: "🇺🇸", fullName: "United States" },
         { name: "Mexico", flag: "🇲🇽", fullName: "Mexico" },
         { name: "Canada", flag: "🇨🇦", fullName: "Canada" },
-        // South America (CONMEBOL)
         { name: "Argentina", flag: "🇦🇷", fullName: "Argentina" },
         { name: "Brazil", flag: "🇧🇷", fullName: "Brazil" },
         { name: "Uruguay", flag: "🇺🇾", fullName: "Uruguay" },
@@ -376,7 +394,6 @@
         { name: "Ecuador", flag: "🇪🇨", fullName: "Ecuador" },
         { name: "Peru", flag: "🇵🇪", fullName: "Peru" },
         { name: "Chile", flag: "🇨🇱", fullName: "Chile" },
-        // Europe (UEFA)
         { name: "France", flag: "🇫🇷", fullName: "France" },
         { name: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", fullName: "England" },
         { name: "Spain", flag: "🇪🇸", fullName: "Spain" },
@@ -393,7 +410,6 @@
         { name: "Ukraine", flag: "🇺🇦", fullName: "Ukraine" },
         { name: "Austria", flag: "🇦🇹", fullName: "Austria" },
         { name: "Turkey", flag: "🇹🇷", fullName: "Turkey" },
-        // Africa (CAF)
         { name: "Morocco", flag: "🇲🇦", fullName: "Morocco" },
         { name: "Senegal", flag: "🇸🇳", fullName: "Senegal" },
         { name: "Tunisia", flag: "🇹🇳", fullName: "Tunisia" },
@@ -403,7 +419,6 @@
         { name: "Cameroon", flag: "🇨🇲", fullName: "Cameroon" },
         { name: "Ghana", flag: "🇬🇭", fullName: "Ghana" },
         { name: "Ivory Coast", flag: "🇨🇮", fullName: "Ivory Coast" },
-        // Asia (AFC)
         { name: "Japan", flag: "🇯🇵", fullName: "Japan" },
         { name: "Korea Republic", flag: "🇰🇷", fullName: "South Korea" },
         { name: "Iran", flag: "🇮🇷", fullName: "Iran" },
@@ -412,7 +427,6 @@
         { name: "Qatar", flag: "🇶🇦", fullName: "Qatar" },
         { name: "Iraq", flag: "🇮🇶", fullName: "Iraq" },
         { name: "UAE", flag: "🇦🇪", fullName: "UAE" },
-        // Oceania (OFC) & Intercontinental Playoff Prospects
         { name: "New Zealand", flag: "🇳🇿", fullName: "New Zealand" },
         { name: "Costa Rica", flag: "🇨🇷", fullName: "Costa Rica" },
         { name: "Jamaica", flag: "🇯🇲", fullName: "Jamaica" },
@@ -421,9 +435,9 @@
     ];
 
     const venuesList = [
-        "🏟️ MetLife Stadium, New York/New Jersey", "🏟️ SoFi Stadium, Los Angeles", 
+        "🏟️ MetLife Stadium, NY/NJ", "🏟️ SoFi Stadium, Los Angeles", 
         "🏟️ AT&T Stadium, Dallas", "🏟️ BC Place, Vancouver",
-        "🏟️ Azteca Stadium, Mexico City", "🏟️ Levi's Stadium, San Francisco", 
+        "🏟️ Azteca Stadium, Mexico City", "🏟️ Levi's Stadium, SF", 
         "🏟️ Mercedes-Benz Stadium, Atlanta", "🏟️ Lumen Field, Seattle",
         "🏟️ Estadio BBVA, Monterrey", "🏟️ BMO Field, Toronto", 
         "🏟️ Gillette Stadium, Boston", "🏟️ Hard Rock Stadium, Miami"
@@ -444,7 +458,6 @@
 
     function randItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-    // Generates structural 12 groups system mapping all 48 teams
     function generateMatches() {
         const now = new Date();
         const matchesArray = [];
@@ -468,7 +481,6 @@
         
         groups.forEach((g) => {
             const [t1, t2, t3, t4] = g.teams;
-            // Round robin scheduling matrices for 4 teams config
             const structuralPairings = [
                 { team1: t1, team2: t2, index: 0 },
                 { team1: t3, team2: t4, index: 1 },
@@ -479,16 +491,12 @@
                 const matchDate = new Date(now);
                 
                 if (matchId === 0) {
-                    // Force immediately live match
                     matchDate.setMinutes(now.getMinutes() - 25);
                 } else if (matchId === 1) {
-                    // Force secondary live layout
                     matchDate.setMinutes(now.getMinutes() - 62);
                 } else if (matchId < 6) {
-                    // Upcoming match starting very soon (in minutes context)
                     matchDate.setMinutes(now.getMinutes() + 3 + matchId * 4);
                 } else {
-                    // Distributed upcoming calendar days context
                     matchDate.setDate(now.getDate() + Math.floor(matchId / 6));
                     matchDate.setHours(18 + (matchId % 3), (matchId % 2) * 30, 0);
                 }
@@ -512,7 +520,6 @@
             });
         });
         
-        // Setup placeholders for structural Knockout Stages (Round of 32, 16, QF, SF, Final)
         const phases = ['Round of 32', 'Round of 16', 'Quarter-Finals', 'Semi-Finals', 'Final'];
         phases.forEach((phaseName, idx) => {
             matchesArray.push({
@@ -522,6 +529,7 @@
                 team2: `Runner Phase ${idx+1}B`,
                 score1: null,
                 score2: null,
+                minute: 0,
                 status: "upcoming",
                 date: new Date(now.getTime() + (idx + 10) * 24 * 60 * 60 * 1000),
                 venue: randItem(venuesList),
@@ -549,7 +557,6 @@
             
             current.minute += 1;
             
-            // Random scoring generator matrix logic rule
             if (current.minute <= 90 && Math.random() < 0.08) {
                 const isTeam1 = Math.random() < 0.5;
                 if (isTeam1) {
@@ -570,7 +577,7 @@
             }
             renderMatrixGrids();
             renderBracketRoadmap();
-        }, 1500); // Accelerated lifecycle timing
+        }, 1500);
         
         liveIntervals.set(match.id, interval);
     }
@@ -600,7 +607,6 @@
         }
     }
     
-    // Calculates precision BD time counter down string data formatting arrays
     function compileCountdownString(targetDate) {
         const now = new Date();
         const difference = targetDate - now;
@@ -618,6 +624,15 @@
         return `⏱️ ${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
     }
     
+    function getStatusBadgeConfig(status, minute) {
+        if (status === 'live') {
+            return { label: `🔴 LIVE • ${minute}'`, className: 'status-live' };
+        } else if (status === 'finished') {
+            return { label: "✅ FINAL", className: 'status-finished' };
+        }
+        return { label: "📅 UPCOMING", className: 'status-upcoming' };
+    }
+
     function renderMatrixGrids() {
         const grid = document.getElementById("matchesGrid");
         if (!grid) return;
@@ -626,17 +641,13 @@
             const scores = (match.score1 !== null) ? `${match.score1} – ${match.score2}` : "— : —";
             const liveClass = match.status === "live" ? "live-match" : "";
             
-            // Format time accurately directly to Bangladesh Standard Time (BST)
             const bstDateOptions = { month: 'short', day: 'numeric', timeZone: 'Asia/Dhaka' };
             const bstTimeOptions = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Dhaka' };
             
             const bdDateStr = match.date.toLocaleDateString('en-US', bstDateOptions);
             const bdTimeStr = match.date.toLocaleTimeString('en-US', bstTimeOptions);
             
-            let badgeLabel = "📅 UPCOMING";
-            let badgeClass = "status-upcoming";
-            if(match.status === 'live') { badgeLabel = `🔴 LIVE • ${match.minute}'`; badgeClass = 'status-live'; }
-            if(match.status === 'finished') { badgeLabel = "✅ FINAL"; badgeClass = 'status-finished'; }
+            const badgeConfig = getStatusBadgeConfig(match.status, match.minute);
             
             let footerActionLayout = "";
             if (match.status === "upcoming") {
@@ -659,7 +670,7 @@
                         <div class="datetime">📅 BD Date: ${bdDateStr} · ⏰ ${bdTimeStr} BST</div>
                         <div class="meta-row">
                             <div class="venue">${match.venue.substring(0, 32)}...</div>
-                            <div class="status ${badgeClass}">${badgeLabel}</div>
+                            <div class="status ${badgeConfig.className}">${badgeConfig.label}</div>
                         </div>
                         ${footerActionLayout}
                     </div>
@@ -682,8 +693,14 @@
                     ${filtered.map(m => {
                         const t1Data = getTeamData(m.team1);
                         const t2Data = getTeamData(m.team2);
+                        const badgeConfig = getStatusBadgeConfig(m.status, m.minute);
+                        
+                        let roadItemModifier = "";
+                        if (m.status === "live") roadItemModifier = "road-live";
+                        if (m.status === "finished") roadItemModifier = "road-finished";
+
                         return `
-                            <div class="match-road-item">
+                            <div class="match-road-item ${roadItemModifier}">
                                 <div class="road-teams">
                                     <div class="road-team-line">
                                         <div class="road-team-info"><span>${t1Data.flag}</span> <span>${m.team1}</span></div>
@@ -694,6 +711,11 @@
                                         <span style="color:#facc15">${m.score2 ?? ''}</span>
                                     </div>
                                 </div>
+                                <div class="road-meta">
+                                    <span class="road-status-tag" style="color: ${m.status === 'live' ? '#facc15' : m.status === 'finished' ? '#10b981' : '#94a3b8'}">
+                                        ${badgeConfig.label}
+                                    </span>
+                                </div>
                             </div>
                         `;
                     }).join('')}
@@ -702,7 +724,6 @@
         }).join('');
     }
 
-    // High performance ticker updates precision down-counters matching system intervals
     function stepRealtimeTimers() {
         document.querySelectorAll(".countdown-timer").forEach(timerElement => {
             const targetStamp = parseInt(timerElement.getAttribute("data-target"));
@@ -713,13 +734,11 @@
         document.getElementById("lastSyncTime").innerHTML = `⚡ BD Time Sync: ${new Date().toLocaleTimeString('en-US', {timeZone: 'Asia/Dhaka'})} BST`;
     }
     
-    // Core Engine Handshakes Initialization
     function initializeEngine() {
         matches.filter(m => m.status === "live").forEach(m => processLiveTicks(m));
         renderMatrixGrids();
         renderBracketRoadmap();
         
-        // Engine Clock Intervals Loops
         setInterval(() => { scanActiveSystemDates(); }, 3000);
         setInterval(() => { stepRealtimeTimers(); }, 1000);
     }
