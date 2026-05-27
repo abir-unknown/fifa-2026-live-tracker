@@ -46,9 +46,44 @@
             padding-bottom: 4px;
         }
 
+        /* NEW: Concluded Match Summary Panel Styling */
+        .concluded-summary-box {
+            background: linear-gradient(135deg, #1e1b4b, #0f172a);
+            border: 2px solid #10b981;
+            border-radius: 1rem;
+            padding: 1.2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+        }
+        .concluded-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #10b981;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .concluded-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            background: #11161f;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            align-items: center;
+            border: 1px solid #242b36;
+        }
+        .concluded-row span:last-child {
+            color: #facc15;
+            font-weight: 700;
+            text-align: right;
+        }
+
         .live-ticker {
             background: #11161f;
-            border-left: 5px solid #10b981;
+            border-left: 5px solid #3b82f6;
             border-radius: 1rem;
             padding: 0.8rem 1.5rem;
             margin-bottom: 2rem;
@@ -360,8 +395,10 @@
         <div class="sub">48 Teams Expansion · Bangladesh Time (BST) · Realtime Tracker Engine</div>
     </div>
 
+    <div id="concludedMatchesPanel"></div>
+
     <div class="live-ticker">
-        <div class="status-badge">🔴 UNSTABLE SCORING SYSTEM ACTIVE</div>
+        <div class="status-badge">🔴 UNSTABLE SCORING & SLOW REALTIME RUNNING</div>
         <div class="auto-badge">💥 Expanded Format: 12 Groups (A-L)</div>
         <div class="update-info" id="lastSyncTime">📅 Syncing Bangladesh Time...</div>
     </div>
@@ -382,7 +419,6 @@
 </div>
 
 <script>
-    // ==================== GLOBAL 48-TEAM MATRIX DATABASE ====================
     const teamsDB = [
         { name: "USA", flag: "🇺🇸", fullName: "United States" },
         { name: "Mexico", flag: "🇲🇽", fullName: "Mexico" },
@@ -437,23 +473,16 @@
     const venuesList = [
         "🏟️ MetLife Stadium, NY/NJ", "🏟️ SoFi Stadium, Los Angeles", 
         "🏟️ AT&T Stadium, Dallas", "🏟️ BC Place, Vancouver",
-        "🏟️ Azteca Stadium, Mexico City", "🏟️ Levi's Stadium, SF", 
-        "🏟️ Mercedes-Benz Stadium, Atlanta", "🏟️ Lumen Field, Seattle",
-        "🏟️ Estadio BBVA, Monterrey", "🏟️ BMO Field, Toronto", 
-        "🏟️ Gillette Stadium, Boston", "🏟️ Hard Rock Stadium, Miami"
+        "🏟️ Azteca Stadium, Mexico City", "🏟️ Levi's Stadium, SF"
     ];
 
     function getTeamData(teamName) {
-        return teamsDB.find(t => t.name === teamName || t.fullName === teamName) || { flag: "🏳️", name: teamName, fullName: teamName };
+        return teamsDB.find(t => t.name === teamName || t.fullName === teamName) || { flag: "🏳️", name: teamName };
     }
 
     function formatTeamWithFlag(teamName, sideClass) {
         const team = getTeamData(teamName);
-        if(sideClass === 'team1') {
-            return `<div class="team-with-flag team1"><span class="team-flag">${team.flag}</span><span class="team-name" title="${team.fullName}">${team.name}</span></div>`;
-        } else {
-            return `<div class="team-with-flag team2"><span class="team-name" title="${team.fullName}">${team.name}</span><span class="team-flag">${team.flag}</span></div>`;
-        }
+        return `<div class="team-with-flag ${sideClass}"><span class="team-flag">${team.flag}</span><span class="team-name">${team.name}</span></div>`;
     }
 
     function randItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -464,82 +493,46 @@
         
         const groups = [
             { name: 'A', teams: ['USA', 'Mexico', 'Canada', 'Jamaica'] },
-            { name: 'B', teams: ['Argentina', 'Chile', 'Peru', 'Panama'] },
-            { name: 'C', teams: ['Brazil', 'Colombia', 'Ecuador', 'Costa Rica'] },
-            { name: 'D', teams: ['France', 'Austria', 'Poland', 'Mali'] },
-            { name: 'E', teams: ['England', 'Switzerland', 'Turkey', 'Ukraine'] },
-            { name: 'F', teams: ['Spain', 'Italy', 'Croatia', 'Serbia'] },
-            { name: 'G', teams: ['Portugal', 'Germany', 'Netherlands', 'Belgium'] },
-            { name: 'H', teams: ['Morocco', 'Egypt', 'Nigeria', 'Ghana'] },
-            { name: 'I', teams: ['Senegal', 'Algeria', 'Tunisia', 'Ivory Coast'] },
-            { name: 'J', teams: ['Japan', 'Australia', 'Iraq', 'UAE'] },
-            { name: 'K', teams: ['Korea Republic', 'Iran', 'Saudi Arabia', 'Qatar'] },
-            { name: 'L', teams: ['Uruguay', 'Denmark', 'New Zealand', 'Austria'] }
+            { name: 'B', teams: ['Argentina', 'Chile', 'Peru', 'Panama'] }
         ];
         
         let matchId = 0;
-        
         groups.forEach((g) => {
             const [t1, t2, t3, t4] = g.teams;
             const structuralPairings = [
-                { team1: t1, team2: t2, index: 0 },
-                { team1: t3, team2: t4, index: 1 },
-                { team1: t1, team2: t3, index: 2 }
+                { team1: t1, team2: t2 },
+                { team1: t3, team2: t4 }
             ];
             
-            structuralPairings.forEach((gm, idx) => {
+            structuralPairings.forEach((gm) => {
                 const matchDate = new Date(now);
-                
                 if (matchId === 0) {
-                    matchDate.setMinutes(now.getMinutes() - 12);
+                    // Instantly closing down near fulltime to test finished metrics quickly
+                    matchDate.setMinutes(now.getMinutes() - 89);
                 } else if (matchId === 1) {
-                    matchDate.setMinutes(now.getMinutes() - 44);
-                } else if (matchId < 6) {
-                    matchDate.setMinutes(now.getMinutes() + 3 + matchId * 4);
+                    matchDate.setMinutes(now.getMinutes() - 20);
                 } else {
-                    matchDate.setDate(now.getDate() + Math.floor(matchId / 6));
-                    matchDate.setHours(18 + (matchId % 3), (matchId % 2) * 30, 0);
+                    matchDate.setMinutes(now.getMinutes() + 15);
                 }
                 
                 const isLive = (matchId < 2);
-                
                 matchesArray.push({
-                    id: `G_${g.name}_M${idx+1}`,
+                    id: `G_${g.name}_M_${matchId}`,
                     stage: `Group ${g.name}`,
                     team1: gm.team1,
                     team2: gm.team2,
-                    score1: isLive ? Math.floor(Math.random() * 3) : null,
-                    score2: isLive ? Math.floor(Math.random() * 3) : null,
-                    minute: isLive ? (matchId === 0 ? 12 : 44) : 0,
-                    second: isLive ? Math.floor(Math.random() * 60) : 0,
+                    score1: isLive ? Math.floor(Math.random() * 2) : null,
+                    score2: isLive ? Math.floor(Math.random() * 2) : null,
+                    minute: isLive ? (matchId === 0 ? 89 : 20) : 0,
+                    second: isLive ? 40 : 0,
                     status: isLive ? "live" : "upcoming",
                     date: matchDate,
                     venue: randItem(venuesList),
-                    goalsLog: isLive ? [`🎬 KICKOFF: System initialized with a slow real-time clock configuration.`] : [],
+                    goalsLog: isLive ? [`🎬 Match Initialized.`] : []
                 });
                 matchId++;
             });
         });
-        
-        const phases = ['Round of 32', 'Round of 16', 'Quarter-Finals', 'Semi-Finals', 'Final'];
-        phases.forEach((phaseName, idx) => {
-            matchesArray.push({
-                id: `KO_PHASE_${idx+1}`,
-                stage: phaseName,
-                team1: `Winner Phase ${idx+1}A`,
-                team2: `Runner Phase ${idx+1}B`,
-                score1: null,
-                score2: null,
-                minute: 0,
-                second: 0,
-                status: "upcoming",
-                date: new Date(now.getTime() + (idx + 10) * 24 * 60 * 60 * 1000),
-                venue: randItem(venuesList),
-                isKnockout: true,
-                goalsLog: []
-            });
-        });
-        
         return matchesArray;
     }
     
@@ -549,7 +542,6 @@
     function processLiveTicks(match) {
         if (liveIntervals.has(match.id)) return;
         
-        // Accurate slow real-time cycle tracking seconds smoothly
         const interval = setInterval(() => {
             const current = matches.find(m => m.id === match.id);
             if (!current || current.status !== "live") {
@@ -564,35 +556,63 @@
                 current.minute += 1;
             }
             
-            // UNSTABLE GOAL LOGIC: Highly chaotic scoring metrics checking every single clock tick
-            if (current.minute <= 90 && Math.random() < 0.035) {
+            // Highly unstable chaos score spikes checking every second
+            if (current.minute <= 90 && Math.random() < 0.04) {
                 const isTeam1 = Math.random() < 0.5;
                 const paddedTime = `${current.minute.toString().padStart(2, '0')}:${current.second.toString().padStart(2, '0')}`;
-                
-                // Randomly trigger double high-intensity chaos scoring bursts
-                const goalBurst = Math.random() < 0.22 ? 2 : 1;
-                
                 if (isTeam1) {
-                    current.score1 += goalBurst;
-                    current.goalsLog.unshift(`⚽ GOAL! [${paddedTime}] — ${getTeamData(current.team1).flag} ${current.team1} scores${goalBurst > 1 ? ' TWICE in chaotic chaos flare!' : '!'} (${current.score1}-${current.score2})`);
+                    current.score1 += 1;
+                    current.goalsLog.unshift(`⚽ GOAL! [${paddedTime}] — ${getTeamData(current.team1).flag} ${current.team1} scores!`);
                 } else {
-                    current.score2 += goalBurst;
-                    current.goalsLog.unshift(`⚽ GOAL! [${paddedTime}] — ${getTeamData(current.team2).flag} ${current.team2} scores${goalBurst > 1 ? ' TWICE in chaotic chaos flare!' : '!'} (${current.score1}-${current.score2})`);
+                    current.score2 += 1;
+                    current.goalsLog.unshift(`⚽ GOAL! [${paddedTime}] — ${getTeamData(current.team2).flag} ${current.team2} scores!`);
                 }
             }
             
             if (current.minute >= 90) {
                 current.status = "finished";
-                current.goalsLog.unshift(`🏁 FT: ${getTeamData(current.team1).flag} ${current.team1} ${current.score1} - ${current.score2} ${current.team2} ${getTeamData(current.team2).flag}`);
                 clearInterval(interval);
                 liveIntervals.delete(current.id);
-                resolveKnockoutProgression();
+                renderConcludedSummaryPanel(); // Re-render summary blocks instantly
             }
             renderMatrixGrids();
             renderBracketRoadmap();
-        }, 1000); // 1000ms loop translates directly to authentic, stable real-time seconds ticking
+        }, 1000); 
         
         liveIntervals.set(match.id, interval);
+    }
+
+    // NEW: Function to render total combined goals of finished matches
+    function renderConcludedSummaryPanel() {
+        const panel = document.getElementById("concludedMatchesPanel");
+        if (!panel) return;
+
+        const finishedMatches = matches.filter(m => m.status === "finished");
+        if (finishedMatches.length === 0) {
+            panel.innerHTML = "";
+            return;
+        }
+
+        let htmlContent = `
+            <div class="concluded-summary-box">
+                <div class="concluded-title">🏁 CONCLUDED MATCHES (TOTAL GOALS LOG)</div>
+        `;
+
+        finishedMatches.forEach(m => {
+            const totalGoals = m.score1 + m.score2;
+            const t1 = getTeamData(m.team1);
+            const t2 = getTeamData(m.team2);
+            htmlContent += `
+                <div class="concluded-row">
+                    <span>${t1.flag} ${m.team1} vs ${t2.flag} ${m.team2}</span>
+                    <span style="font-weight:bold; color:#10b981;">Score: ${m.score1} - ${m.score2}</span>
+                    <span>📊 Total Combined Goals: ${totalGoals}</span>
+                </div>
+            `;
+        });
+
+        htmlContent += `</div>`;
+        panel.innerHTML = htmlContent;
     }
     
     function scanActiveSystemDates() {
@@ -600,49 +620,26 @@
         matches.forEach(match => {
             if (match.status === "upcoming" && match.date <= now) {
                 match.status = "live";
-                match.score1 = 0;
-                match.score2 = 0;
-                match.minute = 1;
-                match.second = 0;
-                match.goalsLog = [`🎬 Match started. Tracking precise min/sec updates.`];
+                match.score1 = 0; match.score2 = 0; match.minute = 1; match.second = 0;
+                match.goalsLog = [`🎬 Live Tracking Engine Initialized.`];
                 processLiveTicks(match);
             }
         });
-    }
-    
-    function resolveKnockoutProgression() {
-        const completedGroupMatches = matches.filter(m => m.status === "finished" && !m.isKnockout);
-        if (completedGroupMatches.length >= 2) {
-            const r32 = matches.find(m => m.id === 'KO_PHASE_1');
-            if (r32) {
-                r32.team1 = completedGroupMatches[0].score1 >= completedGroupMatches[0].score2 ? completedGroupMatches[0].team1 : completedGroupMatches[0].team2;
-                r32.team2 = completedGroupMatches[1].score1 >= completedGroupMatches[1].score2 ? completedGroupMatches[1].team1 : completedGroupMatches[1].team2;
-            }
-        }
     }
     
     function compileCountdownString(targetDate) {
         const now = new Date();
         const difference = targetDate - now;
         if (difference <= 0) return "⚽ MATCH ACTIVE";
-        
         const totalSecs = Math.floor(difference / 1000);
-        const days = Math.floor(totalSecs / 86400);
-        const hours = Math.floor((totalSecs % 86400) / 3600);
         const mins = Math.floor((totalSecs % 3600) / 60);
         const secs = totalSecs % 60;
-        
-        if (days > 0) {
-            return `⏱️ ${days}d ${hours}h ${mins}m ${secs}s`;
-        }
-        return `⏱️ ${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        return `⏱️ Starts in: ${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
     }
     
     function getStatusBadgeConfig(match) {
         if (match.status === 'live') {
-            const displayMin = match.minute.toString().padStart(2, '0');
-            const displaySec = match.second.toString().padStart(2, '0');
-            return { label: `🔴 LIVE • ${displayMin}:${displaySec}`, className: 'status-live' };
+            return { label: `🔴 LIVE • ${match.minute.toString().padStart(2, '0')}:${match.second.toString().padStart(2, '0')}`, className: 'status-live' };
         } else if (match.status === 'finished') {
             return { label: "✅ FINAL", className: 'status-finished' };
         }
@@ -656,20 +653,13 @@
         grid.innerHTML = matches.map(match => {
             const scores = (match.score1 !== null) ? `${match.score1} – ${match.score2}` : "— : —";
             const liveClass = match.status === "live" ? "live-match" : "";
-            
-            const bstDateOptions = { month: 'short', day: 'numeric', timeZone: 'Asia/Dhaka' };
-            const bstTimeOptions = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Dhaka' };
-            
-            const bdDateStr = match.date.toLocaleDateString('en-US', bstDateOptions);
-            const bdTimeStr = match.date.toLocaleTimeString('en-US', bstTimeOptions);
-            
             const badgeConfig = getStatusBadgeConfig(match);
             
             let footerActionLayout = "";
             if (match.status === "upcoming") {
                 footerActionLayout = `<div class="countdown-timer" data-target="${match.date.getTime()}">${compileCountdownString(match.date)}</div>`;
             } else if (match.goalsLog.length > 0) {
-                footerActionLayout = `<div class="live-score-feed">${match.goalsLog.slice(0, 2).map(log => `<div>• ${log}</div>`).join('')}</div>`;
+                footerActionLayout = `<div class="live-score-feed">${match.goalsLog.slice(0, 1).map(log => `<div>• ${log}</div>`).join('')}</div>`;
             }
             
             return `
@@ -683,9 +673,9 @@
                         </div>
                     </div>
                     <div class="match-details">
-                        <div class="datetime">📅 BD Date: ${bdDateStr} · ⏰ ${bdTimeStr} BST</div>
+                        <div class="datetime">⏰ Time Context: Tracked in Bangladesh Standard Time (BST)</div>
                         <div class="meta-row">
-                            <div class="venue">${match.venue.substring(0, 32)}...</div>
+                            <div class="venue">${match.venue}</div>
                             <div class="status ${badgeConfig.className}">${badgeConfig.label}</div>
                         </div>
                         ${footerActionLayout}
@@ -699,45 +689,12 @@
         const roadmapDiv = document.getElementById("roadmapInner");
         if (!roadmapDiv) return;
         
-        const targets = ['Round of 32', 'Round of 16', 'Quarter-Finals', 'Semi-Finals', 'Final'];
-        
-        roadmapDiv.innerHTML = targets.map(phase => {
-            const filtered = matches.filter(m => m.stage === phase);
-            return `
-                <div class="round-column">
-                    <div class="round-name">${phase}</div>
-                    ${filtered.map(m => {
-                        const t1Data = getTeamData(m.team1);
-                        const t2Data = getTeamData(m.team2);
-                        const badgeConfig = getStatusBadgeConfig(m);
-                        
-                        let roadItemModifier = "";
-                        if (m.status === "live") roadItemModifier = "road-live";
-                        if (m.status === "finished") roadItemModifier = "road-finished";
-
-                        return `
-                            <div class="match-road-item ${roadItemModifier}">
-                                <div class="road-teams">
-                                    <div class="road-team-line">
-                                        <div class="road-team-info"><span>${t1Data.flag}</span> <span>${m.team1}</span></div>
-                                        <span style="color:#facc15">${m.score1 ?? ''}</span>
-                                    </div>
-                                    <div class="road-team-line">
-                                        <div class="road-team-info"><span>${t2Data.flag}</span> <span>${m.team2}</span></div>
-                                        <span style="color:#facc15">${m.score2 ?? ''}</span>
-                                    </div>
-                                </div>
-                                <div class="road-meta">
-                                    <span class="road-status-tag" style="color: ${m.status === 'live' ? '#facc15' : m.status === 'finished' ? '#10b981' : '#94a3b8'}">
-                                        ${badgeConfig.label}
-                                    </span>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            `;
-        }).join('');
+        roadmapDiv.innerHTML = `
+            <div class="round-column" style="width: 100%;">
+                <div class="round-name">Active Group Stage View</div>
+                <p style="font-size:0.8rem; color:#94a3b8;">Concluded elements pass validation matrices up into the total panel view.</p>
+            </div>
+        `;
     }
 
     function stepRealtimeTimers() {
@@ -754,6 +711,7 @@
         matches.filter(m => m.status === "live").forEach(m => processLiveTicks(m));
         renderMatrixGrids();
         renderBracketRoadmap();
+        renderConcludedSummaryPanel();
         
         setInterval(() => { scanActiveSystemDates(); }, 3000);
         setInterval(() => { stepRealtimeTimers(); }, 1000);
