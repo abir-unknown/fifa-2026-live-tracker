@@ -361,7 +361,7 @@
     </div>
 
     <div class="live-ticker">
-        <div class="status-badge">🔴 LIVE TARGET SYSTEM READY</div>
+        <div class="status-badge">🔴 UNSTABLE SCORING SYSTEM ACTIVE</div>
         <div class="auto-badge">💥 Expanded Format: 12 Groups (A-L)</div>
         <div class="update-info" id="lastSyncTime">📅 Syncing Bangladesh Time...</div>
     </div>
@@ -491,9 +491,9 @@
                 const matchDate = new Date(now);
                 
                 if (matchId === 0) {
-                    matchDate.setMinutes(now.getMinutes() - 25);
+                    matchDate.setMinutes(now.getMinutes() - 12);
                 } else if (matchId === 1) {
-                    matchDate.setMinutes(now.getMinutes() - 62);
+                    matchDate.setMinutes(now.getMinutes() - 44);
                 } else if (matchId < 6) {
                     matchDate.setMinutes(now.getMinutes() + 3 + matchId * 4);
                 } else {
@@ -508,13 +508,14 @@
                     stage: `Group ${g.name}`,
                     team1: gm.team1,
                     team2: gm.team2,
-                    score1: isLive ? Math.floor(Math.random() * 2) : null,
-                    score2: isLive ? Math.floor(Math.random() * 2) : null,
-                    minute: isLive ? (matchId === 0 ? 25 : 62) : 0,
+                    score1: isLive ? Math.floor(Math.random() * 3) : null,
+                    score2: isLive ? Math.floor(Math.random() * 3) : null,
+                    minute: isLive ? (matchId === 0 ? 12 : 44) : 0,
+                    second: isLive ? Math.floor(Math.random() * 60) : 0,
                     status: isLive ? "live" : "upcoming",
                     date: matchDate,
                     venue: randItem(venuesList),
-                    goalsLog: isLive ? [`🎬 KICKOFF: Group ${g.name} dynamic phase simulation initialized.`] : [],
+                    goalsLog: isLive ? [`🎬 KICKOFF: System initialized with a slow real-time clock configuration.`] : [],
                 });
                 matchId++;
             });
@@ -530,6 +531,7 @@
                 score1: null,
                 score2: null,
                 minute: 0,
+                second: 0,
                 status: "upcoming",
                 date: new Date(now.getTime() + (idx + 10) * 24 * 60 * 60 * 1000),
                 venue: randItem(venuesList),
@@ -547,6 +549,7 @@
     function processLiveTicks(match) {
         if (liveIntervals.has(match.id)) return;
         
+        // Accurate slow real-time cycle tracking seconds smoothly
         const interval = setInterval(() => {
             const current = matches.find(m => m.id === match.id);
             if (!current || current.status !== "live") {
@@ -555,16 +558,26 @@
                 return;
             }
             
-            current.minute += 1;
+            current.second += 1;
+            if (current.second >= 60) {
+                current.second = 0;
+                current.minute += 1;
+            }
             
-            if (current.minute <= 90 && Math.random() < 0.08) {
+            // UNSTABLE GOAL LOGIC: Highly chaotic scoring metrics checking every single clock tick
+            if (current.minute <= 90 && Math.random() < 0.035) {
                 const isTeam1 = Math.random() < 0.5;
+                const paddedTime = `${current.minute.toString().padStart(2, '0')}:${current.second.toString().padStart(2, '0')}`;
+                
+                // Randomly trigger double high-intensity chaos scoring bursts
+                const goalBurst = Math.random() < 0.22 ? 2 : 1;
+                
                 if (isTeam1) {
-                    current.score1++;
-                    current.goalsLog.unshift(`⚽ GOAL! ${current.minute}' — ${getTeamData(current.team1).flag} ${current.team1} scores! (${current.score1}-${current.score2})`);
+                    current.score1 += goalBurst;
+                    current.goalsLog.unshift(`⚽ GOAL! [${paddedTime}] — ${getTeamData(current.team1).flag} ${current.team1} scores${goalBurst > 1 ? ' TWICE in chaotic chaos flare!' : '!'} (${current.score1}-${current.score2})`);
                 } else {
-                    current.score2++;
-                    current.goalsLog.unshift(`⚽ GOAL! ${current.minute}' — ${getTeamData(current.team2).flag} ${current.team2} scores! (${current.score1}-${current.score2})`);
+                    current.score2 += goalBurst;
+                    current.goalsLog.unshift(`⚽ GOAL! [${paddedTime}] — ${getTeamData(current.team2).flag} ${current.team2} scores${goalBurst > 1 ? ' TWICE in chaotic chaos flare!' : '!'} (${current.score1}-${current.score2})`);
                 }
             }
             
@@ -577,7 +590,7 @@
             }
             renderMatrixGrids();
             renderBracketRoadmap();
-        }, 1500);
+        }, 1000); // 1000ms loop translates directly to authentic, stable real-time seconds ticking
         
         liveIntervals.set(match.id, interval);
     }
@@ -590,7 +603,8 @@
                 match.score1 = 0;
                 match.score2 = 0;
                 match.minute = 1;
-                match.goalsLog = [`🎬 Match started live updates live.`];
+                match.second = 0;
+                match.goalsLog = [`🎬 Match started. Tracking precise min/sec updates.`];
                 processLiveTicks(match);
             }
         });
@@ -624,10 +638,12 @@
         return `⏱️ ${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
     }
     
-    function getStatusBadgeConfig(status, minute) {
-        if (status === 'live') {
-            return { label: `🔴 LIVE • ${minute}'`, className: 'status-live' };
-        } else if (status === 'finished') {
+    function getStatusBadgeConfig(match) {
+        if (match.status === 'live') {
+            const displayMin = match.minute.toString().padStart(2, '0');
+            const displaySec = match.second.toString().padStart(2, '0');
+            return { label: `🔴 LIVE • ${displayMin}:${displaySec}`, className: 'status-live' };
+        } else if (match.status === 'finished') {
             return { label: "✅ FINAL", className: 'status-finished' };
         }
         return { label: "📅 UPCOMING", className: 'status-upcoming' };
@@ -647,7 +663,7 @@
             const bdDateStr = match.date.toLocaleDateString('en-US', bstDateOptions);
             const bdTimeStr = match.date.toLocaleTimeString('en-US', bstTimeOptions);
             
-            const badgeConfig = getStatusBadgeConfig(match.status, match.minute);
+            const badgeConfig = getStatusBadgeConfig(match);
             
             let footerActionLayout = "";
             if (match.status === "upcoming") {
@@ -693,7 +709,7 @@
                     ${filtered.map(m => {
                         const t1Data = getTeamData(m.team1);
                         const t2Data = getTeamData(m.team2);
-                        const badgeConfig = getStatusBadgeConfig(m.status, m.minute);
+                        const badgeConfig = getStatusBadgeConfig(m);
                         
                         let roadItemModifier = "";
                         if (m.status === "live") roadItemModifier = "road-live";
