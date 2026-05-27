@@ -11,6 +11,7 @@
             --border-color: #1e293b;
             --accent-green: #00df89;
             --accent-purple: #a855f7;
+            --accent-orange: #f97316;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
         }
@@ -107,6 +108,14 @@
         .filter-btn.active, .filter-btn:hover {
             background: var(--accent-purple);
             border-color: var(--accent-purple);
+        }
+
+        .filter-btn.knockout-btn {
+            border-color: rgba(249, 115, 22, 0.4);
+        }
+        .filter-btn.knockout-btn.active, .filter-btn.knockout-btn:hover {
+            background: var(--accent-orange);
+            border-color: var(--accent-orange);
         }
 
         /* Group Standings Summary View */
@@ -262,13 +271,17 @@
         <button class="filter-btn" onclick="filterMatches('Group J')">Group J</button>
         <button class="filter-btn" onclick="filterMatches('Group K')">Group K</button>
         <button class="filter-btn" onclick="filterMatches('Group L')">Group L</button>
+        <button class="filter-btn knockout-btn" onclick="filterMatches('Round of 32')">Round of 32</button>
+        <button class="filter-btn knockout-btn" onclick="filterMatches('Round of 16')">Round of 16</button>
+        <button class="filter-btn knockout-btn" onclick="filterMatches('Quarter-Finals')">Quarter-Finals</button>
+        <button class="filter-btn knockout-btn" onclick="filterMatches('Semi-Finals')">Semi-Finals</button>
+        <button class="filter-btn knockout-btn" onclick="filterMatches('Finals')">Finals & Bronze</button>
     </div>
 
     <div class="match-grid" id="matchMatrixContainer"></div>
 </div>
 
 <script>
-    // Exact structural groups array mapped straight from [Source: 10] of provided text file
     const OFFICIAL_GROUPS = {
         "Group A": ["Mexico (MEX)", "South Africa (RSA)", "Korea Republic (KOR)", "Czechia (CZE)"],
         "Group B": ["Canada (CAN)", "Bosnia & Herzegovina (BIH)", "Qatar (QAT)", "Switzerland (SUI)"],
@@ -284,8 +297,9 @@
         "Group L": ["England (ENG)", "Croatia (CRO)", "Ghana (GHA)", "Panama (PAN)"]
     };
 
-    // Compiled Fixture Dataset mapping exact matchups, venues [Source: 1] adjusted from Eastern Time (ET) [Source: 9] base values
+    // Comprehensive tournament matrix dataset mapping Group Stages through to the Final [Source: 17, 18, 19, 20, 21, 22]
     const FIXTURE_MATRIX = [
+        // Group Stages (Matches 1-22) [Source: 15]
         { id: 1, stage: "Group A", home: "Mexico (MEX)", away: "South Africa (RSA)", venue: "Estadio Azteca, Mexico City", etIso: "2026-06-11T15:00:00-04:00" },
         { id: 2, stage: "Group A", home: "Korea Republic (KOR)", away: "Czechia (CZE)", venue: "Estadio Guadalajara, Central Region", etIso: "2026-06-11T22:00:00-04:00" },
         { id: 3, stage: "Group B", home: "Canada (CAN)", away: "Bosnia & Herzegovina (BIH)", venue: "Toronto Stadium, Eastern Region", etIso: "2026-06-12T15:00:00-04:00" },
@@ -296,8 +310,6 @@
         { id: 8, stage: "Group D", home: "Australia (AUS)", away: "Türkiye (TUR)", venue: "BC Place, Vancouver Region", etIso: "2026-06-14T00:00:00-04:00" },
         { id: 9, stage: "Group E", home: "Germany (GER)", away: "Curaçao (CUW)", venue: "Houston Stadium, Central Region", etIso: "2026-06-14T13:00:00-04:00" },
         { id: 10, stage: "Group F", home: "Netherlands (NED)", away: "Japan (JPN)", venue: "Dallas Stadium, Central Region", etIso: "2026-06-14T16:00:00-04:00" },
-        
-        // Added Fixtures extracted from document schedule for Groups G to L [Source: 1]
         { id: 11, stage: "Group G", home: "Belgium (BEL)", away: "Egypt (EGY)", venue: "San Francisco Bay Area Stadium", etIso: "2026-06-15T15:00:00-04:00" },
         { id: 12, stage: "Group G", home: "Spain (ESP)", away: "New Zealand (NZL)", venue: "Los Angeles Stadium, Western Region", etIso: "2026-06-15T21:00:00-04:00" },
         { id: 13, stage: "Group H", home: "Spain (ESP)", away: "Cabo Verde (CPV)", venue: "Atlanta Stadium, Central Region", etIso: "2026-06-16T15:00:00-04:00" },
@@ -309,7 +321,31 @@
         { id: 19, stage: "Group K", home: "Portugal (POR)", away: "Congo DR (COD)", venue: "Atlanta Stadium, Central Region", etIso: "2026-06-19T15:00:00-04:00" },
         { id: 20, stage: "Group K", home: "Uzbekistan (UZB)", away: "Colombia (COL)", venue: "Seattle Stadium, Western Region", etIso: "2026-06-19T21:00:00-04:00" },
         { id: 21, stage: "Group L", home: "England (ENG)", away: "Croatia (CRO)", venue: "Toronto Stadium, Eastern Region", etIso: "2026-06-20T15:00:00-04:00" },
-        { id: 22, stage: "Group L", home: "Ghana (GHA)", away: "Panama (PAN)", venue: "New York New Jersey Stadium", etIso: "2026-06-20T21:00:00-04:00" }
+        { id: 22, stage: "Group L", home: "Ghana (GHA)", away: "Panama (PAN)", venue: "New York New Jersey Stadium", etIso: "2026-06-20T21:00:00-04:00" },
+
+        // Round of 32 [Source: 18]
+        { id: 73, stage: "Round of 32", home: "Winner Group A", away: "3rd Place Group C/D/E/H", venue: "Los Angeles Stadium, Western Region", etIso: "2026-06-28T21:00:00-04:00" },
+        { id: 74, stage: "Round of 32", home: "Runner-up Group A", away: "Runner-up Group B", venue: "Finger Lakes Stadium, Boston", etIso: "2026-06-29T15:00:00-04:00" },
+        { id: 75, stage: "Round of 32", home: "Winner Group B", away: "3rd Place Group A/E/F/I", venue: "Dallas Stadium, Central Region", etIso: "2026-06-29T21:00:00-04:00" },
+        { id: 76, stage: "Round of 32", home: "Winner Group C", away: "3rd Place Group F/G/I/J", venue: "New York New Jersey Stadium", etIso: "2026-06-30T18:00:00-04:00" },
+
+        // Round of 16 [Source: 19]
+        { id: 89, stage: "Round of 16", home: "Winner Match 73", away: "Winner Match 74", venue: "BC Place, Vancouver Region", etIso: "2026-07-04T17:00:00-04:00" },
+        { id: 90, stage: "Round of 16", home: "Winner Match 75", away: "Winner Match 76", venue: "Philadelphia Stadium, Eastern Region", etIso: "2026-07-05T16:00:00-04:00" },
+
+        // Quarter-Finals [Source: 20]
+        { id: 97, stage: "Quarter-Finals", home: "Winner Match 89", away: "Winner Match 90", venue: "Boston Stadium, Eastern Region", etIso: "2026-07-09T15:00:00-04:00" },
+        { id: 98, stage: "Quarter-Finals", home: "Winner Match 91", away: "Winner Match 92", venue: "Los Angeles Stadium, Western Region", etIso: "2026-07-10T21:00:00-04:00" },
+
+        // Semi-Finals [Source: 21]
+        { id: 101, stage: "Semi-Finals", home: "Winner Match 97", away: "Winner Match 98", venue: "Dallas Stadium, Central Region", etIso: "2026-07-14T18:00:00-04:00" },
+        { id: 102, stage: "Semi-Finals", home: "Winner Match 99", away: "Winner Match 100", venue: "Atlanta Stadium, Central Region", etIso: "2026-07-15T18:00:00-04:00" },
+
+        // Bronze Third-Place Match [Source: 15]
+        { id: 103, stage: "Finals", home: "Loser Match 101", away: "Loser Match 102", venue: "Hard Rock Stadium, Miami Region", etIso: "2026-07-18T16:00:00-04:00" },
+
+        // The Grand Final [Source: 22]
+        { id: 104, stage: "Finals", home: "Winner Match 101", away: "Winner Match 102", venue: "MetLife Stadium, New York New Jersey", etIso: "2026-07-19T15:00:00-04:00" }
     ];
 
     function buildGroupContainers() {
@@ -340,12 +376,16 @@
                 hour: "2-digit", minute: "2-digit", hour12: true, timeZone: "Asia/Dhaka"
             });
 
+            // Adjust styles depending on match tier types
+            const isKnockout = match.stage !== "Group Phase" && !match.stage.startsWith("Group");
+            const metaColor = isKnockout ? "var(--accent-orange)" : "var(--accent-purple)";
+
             const card = document.createElement("div");
             card.className = "match-card";
             card.innerHTML = `
                 <div class="match-meta">
                     <span>Match ${match.id} · ${match.stage}</span>
-                    <span style="color: var(--accent-purple)">Group Phase</span>
+                    <span style="color: ${metaColor}">${isKnockout ? 'Knockout Stage' : 'Group Phase'}</span>
                 </div>
                 <div class="match-main">
                     <div class="team-row"><span>${match.home}</span><span>-</span></div>
@@ -363,7 +403,7 @@
 
     function filterMatches(stage) {
         document.querySelectorAll(".filter-btn").forEach(btn => {
-            if(btn.innerText.includes(stage) || (stage === 'ALL' && btn.innerText === 'All Matches')) {
+            if(btn.innerText.includes(stage) || (stage === 'ALL' && btn.innerText === 'All Matches') || (stage === 'Finals' && btn.innerText === 'Finals & Bronze')) {
                 btn.classList.add("active");
             } else {
                 btn.classList.remove("active");
